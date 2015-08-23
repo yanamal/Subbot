@@ -308,9 +308,9 @@ def maybeRespond(name, msg):
           if cw in modifier:
             cscore += modifier[cw]
         length = len(cwords) - 2 # start and end token
-        if length < 4:
+        if length < 4 and re.match(r'[a-zA-z]', candidate):
           print "length modifier"
-          cscore += 28-length**3
+          cscore += (4-length)**3
         print candidate, cwords, cscore
         if cscore > best:
           best = cscore

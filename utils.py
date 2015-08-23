@@ -5,6 +5,7 @@ brackets = '\(\)\[\]\<\>\"\"' # TODO: hierarichical decomposition and compositio
 
 
 # TODO: store people information in file, read/write
+# also if no file, generate flat file.
 
 # semi-canonical starts of people's names
 people = ['yana', 'fin', 'merle', 'ramc', 'kurr', 'kes', 'pere', 'diceb0t', 'tele']
@@ -20,8 +21,7 @@ aliases = {'candace': 'merle',
            'doc-rdj': 'kurr',
            'docrdj': 'kurr',
            'doceon': 'fin',
-           'doceon_': 'fin',
-           'ken_': 'fin'}
+           'ken': 'fin'}
 
 
 def getCanonicalName(who):

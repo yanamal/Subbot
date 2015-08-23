@@ -134,24 +134,22 @@ for file in logfiles:
   parseFile(file, tokenDict, responseDict)
 filterResponses(responseDict)
 print responseDict['fin']['ramc']
-'''
+
 while filter(tokenDict):
   pass
-'''
+
 # TODO: filters:
 # for words with >2 of same letter in a word - shorten to 1? 2? find options in dict?
 # convert to lower-case, then deal with punctuation in parsing? record all-caps probability?
 
 # TODO: filter responses:
 # filter out most common words overall?
-'''
+
 rfile = open('responses.yaml', 'w')
 yaml.dump(responseDict, rfile) # TODO: explore manual yaml output for more human-readable file? but then will input have to be manual too?
 rfile.close()
-'''
 
-'''
 freqfile = open('frequencies.yaml', 'w')
 yaml.dump(tokenDict, freqfile) # TODO: explore manual yaml output for more human-readable file? but then will input have to be manual too?
 freqfile.close()
-'''
+
