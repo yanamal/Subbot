@@ -24,10 +24,6 @@ responses = {}
 prevWords = {} # previous utterance for each person talking. Persists across function calls, but mutates.
 
 
-
-# TODO: use aliases to parse who the requested user is
-
-
 def generateString(frequencies, modifier = None):
   # assumes dict of words to
   #   dict of next-words to num. of occurrences
@@ -83,6 +79,7 @@ def initializeData():
   print "loading responses data..."
   rfile = open('responses.yaml', 'r')
   responses = yaml.load(rfile)
+  print responses['fin']['yana']
 
 
 
@@ -175,7 +172,7 @@ beingWho = None
 
 def processInput(text):
   # process a line of text from the IRC server.
-  global channel, frequencies, beingWho
+  global channel, frequencies, beingWho, avgQuality
   # try to get contents of a message
   # these functions will return emtpy things if it wasn't actually a message to the channel
   firstAndRest = getFirstWordAndRest(text)
@@ -193,9 +190,6 @@ def processInput(text):
       restOfText = firstAndRest[1].strip()
   
   # respond to message as needed:
-  # TODO(yanamal): make generic firstWord/action registration instead?
-  # (pros: readability; can create commands dynamically as you go!
-  #  con: any actions not triggered by firstWord would still have to be a manual if check.)
   
   if firstWord == 'hay':
     sendMsg(userName+', hay v:', chan)
@@ -206,18 +200,20 @@ def processInput(text):
       sendIrcCommand('nick _'+person+'_\n')
       sendMsg(babble(person, frequencies))
       beingWho = person
+      avgQuality = 5
     else:
       sendMsg("who's "+who+"?")
   if message.strip() == 'Subbot, stop':
     sendIrcCommand('nick '+botnick+'\n')
     beingWho = None
   # tell me what is in your database!
-  m = re.match(r'if (.+?) says (.+?), what does (.*?) say?', message)
+  m = re.match(r'if (.+?) says (.+?), what does (.+?) say?', message)
   if m:
     print "getting responses"
-    me = m.group(1)
-    person = m.group(2)
-    word = m.group(3)
+    person = m.group(1)
+    word = m.group(2)
+    me = m.group(3)
+    print me, person, word
     if (me in responses) and (person in responses[me]) and (word in responses[me][person]):
       sendMsg(str(responses[me][person][word]), chan)
     else:
@@ -291,8 +287,9 @@ def maybeRespond(name, msg):
       for word in prevWords[person]:
         word = word.strip()
         if (beingWho in responses) and (person in responses[beingWho]) and (word in responses[beingWho][person]):
+          print word
           for cword in responses[beingWho][person][word]:
-            modifier[cword] = responses[beingWho][person][word][cword]**2
+            modifier[cword] = responses[beingWho][person][word][cword]**2 # TODO: +=, don't override
             score += modifier[cword]
     print modifier
     print('response score: '+ str(score))
@@ -300,7 +297,7 @@ def maybeRespond(name, msg):
       # TODO: factor response score into decision for whether to fire off the response?
       best = 0
       bestc = None
-      for i in range(10):
+      for i in range(20):
         candidate = babble(beingWho, frequencies, modifier)
         cscore = 0
         cwords = utils.tokenizeLine(candidate)
@@ -308,15 +305,15 @@ def maybeRespond(name, msg):
           if cw in modifier:
             cscore += modifier[cw]
         length = len(cwords) - 2 # start and end token
-        if length < 4 and re.match(r'[a-zA-z]', candidate):
+        if length < 4 and re.search(r'[a-zA-z]+', candidate):
           print "length modifier"
-          cscore += (4-length)**3
+          cscore += (4-length)**2
         print candidate, cwords, cscore
         if cscore > best:
           best = cscore
           bestc = candidate
       # chance to discard:
-      threshold = randrange(avgQuality*2+1)
+      threshold = randrange(avgQuality*2)
       if bestc:
         print bestc+': '+str(best)+' > '+str(threshold)+'?'
         if best > threshold:

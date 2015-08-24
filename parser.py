@@ -51,6 +51,15 @@ def storeTokens(who, tokens, d):
     pDict[cword][nword] += 1
 
 
+# responses TODO:
+# remove line once generated responses? otherwise if merle says 'shit' once and then fin says 'dothis' a bunch of times in a row, strong relation.
+# generate correlation clusters out of raw response data, use those?
+# response score affected by 'cogency' of response? e.g. 'hay kurr' happens a lot.
+# raw 'respond to yana saying dryfuss' data? raw 'respond with this word to yana'?
+# coherence: sum(frequencies)*product(fractions)
+# or sum(totals)+product(fractions)?
+
+
 def storeResponses(name, tokens, prevWords, responses):
   # responses is person talking to previous person talking to words said previously to word to say to frequency
   if not name in responses:
@@ -133,17 +142,17 @@ logfiles = [ join(path,f) for f in listdir(path) if isfile(join(path,f)) ]
 for file in logfiles:
   parseFile(file, tokenDict, responseDict)
 filterResponses(responseDict)
-print responseDict['fin']['ramc']
+print responseDict['fin']['yana']
 
 while filter(tokenDict):
   pass
 
-# TODO: filters:
-# for words with >2 of same letter in a word - shorten to 1? 2? find options in dict?
-# convert to lower-case, then deal with punctuation in parsing? record all-caps probability?
 
-# TODO: filter responses:
-# filter out most common words overall?
+# TODO: filters:
+# for words with >2 of same letter in a word - shorten to 1? 2? find similar and record? tokens include, e.g. 'a.' which means 'several as'?
+
+# TODO: output histograms for total word frequence, relationship frequency #s (e.g. 3000 pairs of words are seen together 3 times)
+
 
 rfile = open('responses.yaml', 'w')
 yaml.dump(responseDict, rfile) # TODO: explore manual yaml output for more human-readable file? but then will input have to be manual too?

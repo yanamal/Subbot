@@ -8,11 +8,10 @@ brackets = '\(\)\[\]\<\>\"\"' # TODO: hierarichical decomposition and compositio
 # also if no file, generate flat file.
 
 # semi-canonical starts of people's names
-people = ['yana', 'fin', 'merle', 'ramc', 'kurr', 'kes', 'pere', 'diceb0t', 'tele']
+people = ['yana', 'fin', 'merle', 'ramc', 'kurr', 'kes', 'pere', 'diceb0t', 'tele', 'leigh', 'candace']
 
 # aliases (mostly IC - but there are lots of outliers for ooc chatter with ic names and vice versa)
-aliases = {'candace': 'merle',
-           'leigh': 'pere',
+aliases = {
            'rudy': 'kurr',
            'docjones': 'kurr',
            'prelate': 'kes',
@@ -37,6 +36,10 @@ def getCanonicalName(who):
   return
 
 
+# TODO: smarter parsing of '-', '+'?
+# case-insensitivity? (all-caps changes? capitalize at beginning of sentence? % of that also?)
+# record all-caps probability per word? "next cap", "next all caps" token?
+
 def tokenizeLine(what):
   tokens = ['\\s'] # start with start-of-sentence token
   # separate by punctuation and brackets
@@ -50,3 +53,4 @@ def tokenizeLine(what):
   tokens.append('\\e') # end-of-sentence token
   return tokens
 
+# TODO: detokenize (i.e. produce line)
